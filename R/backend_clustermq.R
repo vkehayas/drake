@@ -78,10 +78,10 @@ cmq_master_iter <- function(config) {
   if (!identical(msg$token, "set_common_data_token")) {
     config$logger$minor("sending common data")
     config$workers$send_common_data()
-  } else if (!config$queue$empty()) {
-    cmq_next_target(config)
-  } else {
+  } else if (config$queue$empty()) {
     config$workers$send_shutdown_worker()
+  } else {
+    cmq_next_target(config)
   }
 }
 
@@ -117,11 +117,11 @@ cmq_next_target <- function(config) {
   target <- config$queue$pop0()
   # Longer tests will catch this:
   if (!length(target)) {
-    config$workers$send_wait() # nocov
+    cmq_wait(config) # nocov
     return() # nocov
   }
   if (no_hpc(target, config)) {
-    config$workers$send_wait()
+    cmq_wait(config)
     cmq_local_build(target, config)
   } else {
     cmq_send_target(target, config)
@@ -132,7 +132,7 @@ cmq_send_target <- function(target, config) {
   meta <- drake_meta_(target = target, config = config)
   if (handle_triggers(target, meta, config)) {
     cmq_conclude_target(target = target, config = config)
-    config$workers$send_wait()
+    cmq_wait(config)
     return()
   }
   announce_build(target = target, config = config)
@@ -153,6 +153,15 @@ cmq_send_target <- function(target, config) {
     ),
     env = list(target = target, meta = meta, deps = deps, layout = layout)
   )
+}
+
+cmq_wait <- function(config) {
+  if (config$counter$workers > config$counter$remaining) {
+    config$counter$workers <- config$counter$workers - 1L
+    config$workers$send_shutdown_worker()
+  } else {
+    config$workers$send_wait()
+  }
 }
 
 cmq_deps_list <- function(target, config) {
