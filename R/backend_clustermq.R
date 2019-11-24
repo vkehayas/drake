@@ -8,14 +8,16 @@ drake_backend.clustermq <- function(config) {
   if (config$queue$empty()) {
     return()
   }
+  n_workers <- max(config$jobs, config$queue$size())
   config$workers <- clustermq::workers(
-    n_jobs = config$jobs,
+    n_jobs = n_workers,
     template = config$template
   )
   config$logger$minor("set common data")
   cmq_set_common_data(config)
   config$counter <- new.env(parent = emptyenv())
   config$counter$remaining <- config$queue$size()
+  config$counter$workers <- n_workers
   cmq_master(config)
 }
 
