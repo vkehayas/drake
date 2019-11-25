@@ -8,7 +8,7 @@ drake_backend.clustermq <- function(config) {
   if (config$queue$empty()) {
     return()
   }
-  n_workers <- max(config$jobs, config$queue$size())
+  n_workers <- min(config$jobs, config$queue$size())
   config$workers <- clustermq::workers(
     n_jobs = n_workers,
     template = config$template
