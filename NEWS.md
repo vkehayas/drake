@@ -1,4 +1,4 @@
-# Version 7.7.0.9002
+# Version 7.8.0
 
 ## Bug fixes
 
@@ -30,8 +30,7 @@
 - Make `dynamic` a formal argument of `target()`.
 - Always lock/unlock the environment target by target, allowing informative error messages to appear more readily (#1062, @PedramNavid)
 - Automatically ignore `storr`s and decorated `storr`s (#1071).
-- Speed up memory management by avoiding a call to `setdiff()`.
-- Cap the initial number of clustermq workers.
+- Speed up memory management by avoiding a call to `setdiff()` and avoiding `names(config$envir_targets)`.
 
 
 # Version 7.7.0
