@@ -156,7 +156,7 @@ cmq_send_target <- function(target, config) {
 }
 
 cmq_wait <- function(config) {
-  if (config$counter$workers > config$counter$remaining) {
+  if (config$counter$workers > config$queue$size()) {
     config$counter$workers <- config$counter$workers - 1L
     config$workers$send_shutdown_worker()
   } else {
