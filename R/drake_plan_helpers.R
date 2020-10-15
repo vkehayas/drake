@@ -112,7 +112,7 @@ target <- function(
 #'   By default, the target will rebuild if and only if:
 #'   - Any of `command`, `depend`, or `file` is `TRUE`, or
 #'   - `condition` evaluates to `TRUE`, or
-#'   - `change` evaluates to a value different from last time.
+#'   - `change` evaluates to a value different from last time.  \cr
 #'   The above steps correspond to the "whitelist" decision rule.
 #'   You can select other decision rules with the `mode` argument
 #'   described in this help file.
